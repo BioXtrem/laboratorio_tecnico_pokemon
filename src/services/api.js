@@ -2,6 +2,8 @@ const charactersList = character => ({
     "name": character.name,
     "image": character.image,
     "status": character.status,
+    "species": character.species,
+    "gender": character.gender,
     "location": character.location.name,
     "episode": character.episode[0].name,
 })
@@ -14,6 +16,8 @@ export const rickMortyCharacteres = async (character = "rick") => {
                 name
                 image
                 status
+                species
+                gender
                 location {
                 name
                 }
@@ -24,10 +28,7 @@ export const rickMortyCharacteres = async (character = "rick") => {
             }
         }
     `;
-
-
-
-
+    
     const response = await fetch('https://rickandmortyapi.com/graphql', {
         method: 'POST',
         headers: {
@@ -38,5 +39,5 @@ export const rickMortyCharacteres = async (character = "rick") => {
     });
 
     const { data } = await response.json();
-    console.log(data.characters.results.map(charactersList));
+    return data.characters.results.map(charactersList);
 }

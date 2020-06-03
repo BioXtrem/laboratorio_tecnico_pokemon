@@ -26,10 +26,37 @@
     </div>
     <hr class="white">
     <b-container>
-      <b-form-input id="nombre" v-model="nombre" type="text" placeholder="Rick" ></b-form-input>
-      <div v-for="(character, key) in characterList" :key="key">
-        <p>{{ character.name }}</p>
-      </div>
+      <b-form-input id="nombre" v-model="nombre" type="text" placeholder="Rick" v-on:keyup="updateCharacters"></b-form-input>
+      <b-row class="justify-content-md-center">
+        <div v-for="(character, key) in characterList" :key="key">
+          <b-col>
+            <b-card
+              :title="character.name"
+              :img-src="character.image"
+              img-top
+              tag="article"
+              style="max-width: 20rem; height: 38rem;"
+              class="mb-2"
+            >
+              <b-card-text>
+                <span class="font-weight-bold">Status:</span> {{ character.status }}
+              </b-card-text>
+              <b-card-text>
+                <span class="font-weight-bold">Gender:</span> {{ character.gender }}
+              </b-card-text>
+              <b-card-text>
+                <span class="font-weight-bold">Specie:</span> {{ character.species }}
+              </b-card-text>
+              <b-card-text>
+                <span class="font-weight-bold">Location:</span> {{ character.location }}
+              </b-card-text>
+              <b-card-text>
+                <span class="font-weight-bold">Firts seen in:</span> {{ character.episode }}
+              </b-card-text>
+            </b-card>
+          </b-col>
+        </div>
+      </b-row>
 
     </b-container>
   </div>
@@ -52,6 +79,9 @@ import { rickMortyCharacteres } from '../services/api'
         localStorage.setItem('name', '')
         this.$router.go('/');
       },
+      updateCharacters(ev){
+        rickMortyCharacteres(ev.target.value).then(resuts => this.characters = resuts)
+      }
     },
     computed: {
       characterList() {
@@ -62,7 +92,7 @@ import { rickMortyCharacteres } from '../services/api'
         document.body.className = 'rm'
     },
     created(){
-      this.characters = rickMortyCharacteres()
+      rickMortyCharacteres().then(resuts => this.characters = resuts)
     },    
   }
 </script>
