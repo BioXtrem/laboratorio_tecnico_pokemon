@@ -4,7 +4,7 @@
       <b-navbar toggleable="lg" type="dark" variant="">
         <b-row class="w-100 text-center">
           <b-col>
-            <b-nav-text><b-icon icon="person"></b-icon> Bienvenido [Usuario]</b-nav-text>
+            <b-nav-text><b-icon icon="person"></b-icon> Bienvenido {{ name }}</b-nav-text>
           </b-col>
           <b-col>
             <b-navbar-brand class="pokemon">PoKéMoN</b-navbar-brand>
@@ -17,7 +17,7 @@
                   <b-nav-item href="#">Home</b-nav-item>
                   <b-nav-item href="#">Habilidades</b-nav-item>
                   <b-nav-item href="#">Rick Y Morthy</b-nav-item>
-                  <b-nav-item href="#">Cerrar sesión</b-nav-item>
+                  <b-nav-item v-on:click="closeSesion">Cerrar sesión</b-nav-item>
                 </b-navbar-nav>
               </b-collapse>
           </b-col>
@@ -60,13 +60,21 @@
   export default {
     data() {
       return {
+        name: localStorage.getItem('name'),
         selected: null,
         options: [
           { value: null, text: 'SELECTOR DE POKÉMON' },
           { value: null, text: 'SELECTOR DE POKÉMON' },
         ]
-      }
+      }      
     },
+    methods: {
+      closeSesion() {
+        localStorage.setItem('isAuthenticated', false)
+        localStorage.setItem('name', '')
+        this.$router.go('/');
+      }
+    }
   }
 </script>
 

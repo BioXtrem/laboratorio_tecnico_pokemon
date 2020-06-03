@@ -9,7 +9,7 @@
             </b-card-title>      
 
             <b-card-body v-if="form.signIn">
-              <b-form @submit="onSubmit">
+              <b-form @submit.prevent="singIn">
                 <div class="form-label-group">
                   <b-input type="email" v-model="dataForm.email" :state="validateEmail" id="email" class="form-control"></b-input>
                   <label for="email">Correo</label>
@@ -26,7 +26,7 @@
                 <div class="custom-control custom-checkbox mb-3">
                   
                 </div>
-                <b-button :disabled="validateButtonSingIn" size="lg" variant="primary" class="btn-block text-uppercase">Iniciar Sesión</b-button>
+                <b-button :disabled="validateButtonSingIn" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Iniciar Sesión</b-button>
                 
                 <hr class="my-4">
                 <b-button pill variant="outline-secondary" v-on:click="showSignIn">Registrarse</b-button>
@@ -34,7 +34,7 @@
             </b-card-body>
 
             <b-card-body v-else>
-              <b-form @submit="onSubmit">
+              <b-form @submit.prevent="singUp">
                 <div class="form-label-group">
                   <b-input type="email" v-model="dataForm.email" :state="validateEmail" id="email" class="form-control"></b-input>
                   <label for="email">Correo</label>
@@ -59,7 +59,7 @@
                 <div class="custom-control custom-checkbox mb-3">
                   
                 </div>
-                <b-button :disabled="validateButtonSingUp" size="lg" variant="primary" class="btn-block text-uppercase">Iniciar Sesión</b-button>
+                <b-button :disabled="validateButtonSingUp" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Iniciar Sesión</b-button>
                 
                 <hr class="my-4">
                 <b-button pill variant="outline-secondary" v-on:click="showSignUp">Iniciar Sesión</b-button>
@@ -74,10 +74,31 @@
 </template>
 
 <script>
+  import Firebase from 'firebase'
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCiAuVte5kWwgmAIpxCaKRw9b3AC2IQRgM",
+    authDomain: "vuefire-5651b.firebaseapp.com",
+    databaseURL: "https://vuefire-5651b.firebaseio.com",
+    projectId: "vuefire-5651b",
+    storageBucket: "vuefire-5651b.appspot.com",
+    messagingSenderId: "1029123160162",
+    appId: "1:1029123160162:web:7c9d05900c22eef330393b"
+  };
+
+  let firebaseConnection = Firebase.initializeApp(firebaseConfig);
+  let db = firebaseConnection.database();
+
+  let usersRef = db.ref('users');
+
   export default {
     name:'',
+    firebase: {
+      users: usersRef
+    },
     data() {
       return {
+        users: [],
         form:{
           title: "Iniciar Sesión",
           signIn: true,
@@ -90,23 +111,27 @@
         re:  /\S+@\S+\.\S+/
       }
     },
+    beforeCreate () {
+      if(localStorage.getItem('isAuthenticated') === 'true')
+        this.$router.push('home')
+    },
     methods: {
       onSubmit(evt) {
         evt.preventDefault()
         alert(JSON.stringify(this.form))
       },
-      onReset(evt) {
-        evt.preventDefault()
-        // Reset our form values
-        this.form.email = ''
-        this.form.name = ''
-        this.form.food = null
-        this.form.checked = []
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
+      singIn() {
+        console.log(this.users)
+      },
+      singUp() {
+        const newUser = {
+          email: this.dataForm.email,
+          password: this.dataForm.password,
+        }
+        usersRef.push(newUser)
+        localStorage.setItem('isAuthenticated', true)
+        localStorage.setItem('name', this.dataForm.email.split("@")[0])
+        this.$router.go('home')
       },
       showSignIn(){
         this.form = {

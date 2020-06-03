@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { rtdbPlugin as VueFire } from 'vuefire'
 
 import InicioRegistro from './components/InicioRegistro'
 import Pokemon from './components/Pokemon'
@@ -10,9 +11,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 
+Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
-Vue.use(VueRouter)
+Vue.use(VueFire)
 Vue.config.productionTip = false
 
 const router = new VueRouter({
@@ -24,14 +26,15 @@ const router = new VueRouter({
     component: InicioRegistro,
   }, {
     path: '/home',
+    name: 'home',
     component: Pokemon,
   }]
 })
 
-/* router.beforeEach((to, from, next) => {
-  if (to.path == '/' && !isAuthenticated) next({ name: 'Login' })
+router.beforeEach((to, from, next) => {
+  if (to.name != 'sesion' && localStorage.getItem('isAuthenticated') !== 'true') next({ name: 'sesion' })
   else next()
-}) */
+})
 
 new Vue({
   router,
