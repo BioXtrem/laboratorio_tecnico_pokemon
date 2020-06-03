@@ -75,6 +75,7 @@
 
 <script>
   export default {
+    name:'',
     data() {
       return {
         form:{
