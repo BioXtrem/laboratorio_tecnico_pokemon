@@ -7,6 +7,7 @@ import { rtdbPlugin as VueFire } from 'vuefire'
 import InicioRegistro from './components/InicioRegistro'
 import Pokemon from './components/Pokemon'
 import RickMorty from './components/RickMorty'
+import PageNotFound from './components/PageNotFound'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -33,7 +34,8 @@ const router = new VueRouter({
     path: '/rickmorty',
     name: 'rickmorty',
     component: RickMorty,
-  }]
+  },
+  { path: "*", component: PageNotFound }]
 })
 
 router.beforeEach((to, from, next) => {

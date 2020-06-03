@@ -28,7 +28,7 @@ export const rickMortyCharacteres = async (character = "rick") => {
             }
         }
     `;
-    
+
     const response = await fetch('https://rickandmortyapi.com/graphql', {
         method: 'POST',
         headers: {
@@ -40,4 +40,30 @@ export const rickMortyCharacteres = async (character = "rick") => {
 
     const { data } = await response.json();
     return data.characters.results.map(charactersList);
+}
+
+
+export const getPokemons = async () => {
+    let pokemons = []
+    const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=964');
+    const { results } = await response.json();
+
+    await Promise.all(results.map(async (pokemon) => {
+        const response = await fetch(pokemon.url);
+        const result = await response.json();
+
+        let tipo = []
+
+        result.types.forEach(element => {
+            tipo = [...tipo, element.type.name]
+        });
+
+        pokemons = [...pokemons, {
+            name: pokemon.name,
+            img: result.sprites.front_default,
+            tipo
+        }]
+    }));
+    
+    return pokemons;
 }

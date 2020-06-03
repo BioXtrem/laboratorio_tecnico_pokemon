@@ -32,18 +32,17 @@
       <div class="grid-padre">
         <div class="scrollY">
           <div class="grid-tres">
-            <div class="grid-item">1</div>
-            <div class="grid-item">2</div>
-            <div class="grid-item">3</div>  
-            <div class="grid-item">4</div>
-            <div class="grid-item">5</div>
-            <div class="grid-item">6</div>  
-            <div class="grid-item">7</div>
-            <div class="grid-item">8</div>
-            <div class="grid-item">9</div>
-            <div class="grid-item">10</div>
-            <div class="grid-item">11</div>
-            <div class="grid-item">12</div>
+            <div class="grid-item" v-for="(pokemon, key) in pokemonCalculated" :key="key">
+
+              <vue-load-image>
+                <img slot="image" :src="pokemon.img">
+                <img slot="preloader" :src="imagen" style="width: 5%;"/>
+                <img slot="error" :src="imagen" style="width: 5%;"/>
+              </vue-load-image>
+
+              <h3>{{ pokemon.name }}</h3>
+              <button class="button1 ">Agregar</button>
+            </div>
           </div>          
         </div>
         <div class="grid-uno">
@@ -57,16 +56,25 @@
 </template>
 
 <script>
+  import { getPokemons } from '../services/api'
+  import VueLoadImage from 'vue-load-image'
+  import imagen from '../assets/loading.gif'
+
   export default {
     data() {
       return {
+        imagen: imagen,
         name: localStorage.getItem('name'),
         selected: null,
         options: [
           { value: null, text: 'SELECTOR DE POKÉMON' },
           { value: null, text: 'SELECTOR DE POKÉMON' },
-        ]
+        ],
+        pokemons: []
       }      
+    },
+    components: {
+      'vue-load-image': VueLoadImage
     },
     methods: {
       closeSesion() {
@@ -77,10 +85,18 @@
       navRM() {
         this.$router.push("/rickmorty")
       }
+    },    
+    computed: {
+      pokemonCalculated() {
+        return this.pokemons
+      }
     },
     beforeCreate: function() {
-        document.body.className = 'poke';
-    }
+      document.body.className = 'poke';      
+    }, 
+    created(){
+      getPokemons().then(result => this.pokemons=result)
+    },
   }
 </script>
 
@@ -103,6 +119,25 @@ hr.white {
   border-radius: 5px;
 }
 
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #4CAF50;
+  padding: 10px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
 .pokemon {
   font-family: pokemonFont;
 }
@@ -120,6 +155,7 @@ hr.white {
   font-size: 30px;
   text-align: center;
   height: 16rem;
+  max-height: 16rem;
 }
 
 .grid-item-seleccionados {

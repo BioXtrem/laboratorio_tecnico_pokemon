@@ -14,7 +14,7 @@
               <b-collapse id="nav-collapse" is-nav>
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="">
-                  <b-nav-item href="#">Home</b-nav-item>
+                  <b-nav-item v-on:click="goHome">Home</b-nav-item>
                   <b-nav-item href="#">Habilidades</b-nav-item>
                   <b-nav-item href="#">Rick Y Morthy</b-nav-item>
                   <b-nav-item v-on:click="closeSesion">Cerrar sesión</b-nav-item>
@@ -57,7 +57,6 @@
           </b-col>
         </div>
       </b-row>
-
     </b-container>
   </div>
 </template>
@@ -79,6 +78,9 @@ import { rickMortyCharacteres } from '../services/api'
         localStorage.setItem('name', '')
         this.$router.go('/');
       },
+      goHome() {
+        this.$router.push('/home');
+      },
       updateCharacters(ev){
         rickMortyCharacteres(ev.target.value).then(resuts => this.characters = resuts)
       }
@@ -92,7 +94,7 @@ import { rickMortyCharacteres } from '../services/api'
         document.body.className = 'rm'
     },
     created(){
-      rickMortyCharacteres().then(resuts => this.characters = resuts)
+      rickMortyCharacteres().then(resuts => { this.characters = resuts })
     },    
   }
 </script>
