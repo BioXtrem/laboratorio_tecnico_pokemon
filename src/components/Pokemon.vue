@@ -16,7 +16,7 @@
                 <b-navbar-nav class="">
                   <b-nav-item href="#">Home</b-nav-item>
                   <b-nav-item href="#">Habilidades</b-nav-item>
-                  <b-nav-item href="#">Rick Y Morthy</b-nav-item>
+                  <b-nav-item v-on:click="navRM">Rick Y Morthy</b-nav-item>
                   <b-nav-item v-on:click="closeSesion">Cerrar sesión</b-nav-item>
                 </b-navbar-nav>
               </b-collapse>
@@ -73,7 +73,13 @@
         localStorage.setItem('isAuthenticated', false)
         localStorage.setItem('name', '')
         this.$router.go('/');
+      },
+      navRM() {
+        this.$router.push("/rickmorty")
       }
+    },
+    beforeCreate: function() {
+        document.body.className = 'poke';
     }
   }
 </script>
@@ -84,7 +90,7 @@
   src: url('../assets/pokemon.ttf');
 }
 
-body {
+body.poke {
   background: url('../assets/backgroundblue.jpg');
   background-position: center center;
   background-repeat: no-repeat;

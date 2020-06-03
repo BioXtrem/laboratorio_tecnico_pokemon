@@ -101,25 +101,37 @@
         this.$router.push('home')
     },
     methods: {
-      onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
-      },
-      singIn() {   
+      singIn() {
+        let foundUser = false;
         for (let user of this.users) {
-          console.log(user)
           if(user.email == this.dataForm.email && user.password == this.dataForm.password){
+            foundUser = true;
             localStorage.setItem('isAuthenticated', true)
-            localStorage.setItem('name', this.dataForm.email.split("@")[0])
-            this.$router.go('home')
+            localStorage.setItem('name', this.dataForm.email.split("@")[0])            
             break
           }
         }
+        
+        if(foundUser){
+          this.$router.go('home')
+        } else {
+          this.dataForm = {
+          email: this.dataForm.email,
+          password: '',
+          repitPassword: '',
+        }
+        this.$bvToast.toast('El correo o la contraseña es incorrecta', {
+          title: 'Usuario',
+          variant: 'danger',
+          solid: true,
+          toaster: 'b-toaster-top-center'
+        })
+      }
+        
       },
       singUp() {
         let addUser = true
         for (let user of this.users) {
-          console.log(user)
           if(user.email == this.dataForm.email ){
             addUser = false
             break
@@ -144,7 +156,7 @@
             title: 'Correo',
             variant: 'danger',
             solid: true,
-            toaster: 'b-toaster-bottom-center'
+            toaster: 'b-toaster-top-center'
           })
         }     
       },
