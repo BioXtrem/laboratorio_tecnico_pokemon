@@ -26,7 +26,7 @@
                 <div class="custom-control custom-checkbox mb-3">
                   
                 </div>
-                <b-button :disabled="validateButtonSingIn" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Iniciar Sesión</b-button>
+                <b-button pill :disabled="validateButtonSingIn" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Iniciar Sesión</b-button>
                 
                 <hr class="my-4">
                 <b-button pill variant="outline-secondary" v-on:click="showSignIn">Registrarse</b-button>
@@ -59,7 +59,7 @@
                 <div class="custom-control custom-checkbox mb-3">
                   
                 </div>
-                <b-button :disabled="validateButtonSingUp" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Iniciar Sesión</b-button>
+                <b-button pill :disabled="validateButtonSingUp" size="lg" variant="primary" class="btn-block text-uppercase" type="submit">Registrarse</b-button>
                 
                 <hr class="my-4">
                 <b-button pill variant="outline-secondary" v-on:click="showSignUp">Iniciar Sesión</b-button>
@@ -74,22 +74,7 @@
 </template>
 
 <script>
-  import Firebase from 'firebase'
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCiAuVte5kWwgmAIpxCaKRw9b3AC2IQRgM",
-    authDomain: "vuefire-5651b.firebaseapp.com",
-    databaseURL: "https://vuefire-5651b.firebaseio.com",
-    projectId: "vuefire-5651b",
-    storageBucket: "vuefire-5651b.appspot.com",
-    messagingSenderId: "1029123160162",
-    appId: "1:1029123160162:web:7c9d05900c22eef330393b"
-  };
-
-  let firebaseConnection = Firebase.initializeApp(firebaseConfig);
-  let db = firebaseConnection.database();
-
-  let usersRef = db.ref('users');
+  import { usersRef } from '../services/firebase'
 
   export default {
     name:'',
@@ -120,18 +105,48 @@
         evt.preventDefault()
         alert(JSON.stringify(this.form))
       },
-      singIn() {
-        console.log(this.users)
+      singIn() {   
+        for (let user of this.users) {
+          console.log(user)
+          if(user.email == this.dataForm.email && user.password == this.dataForm.password){
+            localStorage.setItem('isAuthenticated', true)
+            localStorage.setItem('name', this.dataForm.email.split("@")[0])
+            this.$router.go('home')
+            break
+          }
+        }
       },
       singUp() {
-        const newUser = {
-          email: this.dataForm.email,
-          password: this.dataForm.password,
+        let addUser = true
+        for (let user of this.users) {
+          console.log(user)
+          if(user.email == this.dataForm.email ){
+            addUser = false
+            break
+          }
         }
-        usersRef.push(newUser)
-        localStorage.setItem('isAuthenticated', true)
-        localStorage.setItem('name', this.dataForm.email.split("@")[0])
-        this.$router.go('home')
+        if(addUser){
+          const newUser = {
+            email: this.dataForm.email,
+            password: this.dataForm.password,
+          }
+          usersRef.push(newUser)
+          localStorage.setItem('isAuthenticated', true)
+          localStorage.setItem('name', this.dataForm.email.split("@")[0])
+          this.$router.go('home')
+        } else{
+          this.dataForm = {
+            email: '',
+            password: '',
+            repitPassword: '',
+          }
+          this.$bvToast.toast('El correo ya existe', {
+            title: 'Correo',
+            variant: 'danger',
+            solid: true,
+            toaster: 'b-toaster-bottom-center'
+          })
+        }     
       },
       showSignIn(){
         this.form = {
@@ -172,7 +187,7 @@
         return !(this.re.test(this.dataForm.email) && this.dataForm.password.length > 5 && this.dataForm.password.length < 17 && this.dataForm.password == this.dataForm.repitPassword);
       },
       validateRepitPassword() {
-        return this.dataForm.password == this.dataForm.repitPassword
+        return this.dataForm.password == this.dataForm.repitPassword && this.dataForm.repitPassword.length > 0
       },
     }
   }
